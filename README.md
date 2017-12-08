@@ -36,7 +36,7 @@ print("test contains: {}".format(test.shape))
 
 
 ```python
-train.head(10)
+train.head(5)
 ```
 
 
@@ -149,81 +149,6 @@ train.head(10)
       <td>8.0500</td>
       <td>NaN</td>
       <td>S</td>
-    </tr>
-    <tr>
-      <th>5</th>
-      <td>6</td>
-      <td>0</td>
-      <td>3</td>
-      <td>Moran, Mr. James</td>
-      <td>male</td>
-      <td>NaN</td>
-      <td>0</td>
-      <td>0</td>
-      <td>330877</td>
-      <td>8.4583</td>
-      <td>NaN</td>
-      <td>Q</td>
-    </tr>
-    <tr>
-      <th>6</th>
-      <td>7</td>
-      <td>0</td>
-      <td>1</td>
-      <td>McCarthy, Mr. Timothy J</td>
-      <td>male</td>
-      <td>54.0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>17463</td>
-      <td>51.8625</td>
-      <td>E46</td>
-      <td>S</td>
-    </tr>
-    <tr>
-      <th>7</th>
-      <td>8</td>
-      <td>0</td>
-      <td>3</td>
-      <td>Palsson, Master. Gosta Leonard</td>
-      <td>male</td>
-      <td>2.0</td>
-      <td>3</td>
-      <td>1</td>
-      <td>349909</td>
-      <td>21.0750</td>
-      <td>NaN</td>
-      <td>S</td>
-    </tr>
-    <tr>
-      <th>8</th>
-      <td>9</td>
-      <td>1</td>
-      <td>3</td>
-      <td>Johnson, Mrs. Oscar W (Elisabeth Vilhelmina Berg)</td>
-      <td>female</td>
-      <td>27.0</td>
-      <td>0</td>
-      <td>2</td>
-      <td>347742</td>
-      <td>11.1333</td>
-      <td>NaN</td>
-      <td>S</td>
-    </tr>
-    <tr>
-      <th>9</th>
-      <td>10</td>
-      <td>1</td>
-      <td>2</td>
-      <td>Nasser, Mrs. Nicholas (Adele Achem)</td>
-      <td>female</td>
-      <td>14.0</td>
-      <td>1</td>
-      <td>0</td>
-      <td>237736</td>
-      <td>30.0708</td>
-      <td>NaN</td>
-      <td>C</td>
     </tr>
   </tbody>
 </table>
@@ -377,7 +302,7 @@ Visualizing distribution and correlation
 
 
 ```python
-features = pd.concat([train, test])
+features = pd.concat([train, test]).reset_index(drop=True)
 features.drop("Survived",axis=1,inplace=True)
 
 numeric_feats = features.dtypes[features.dtypes!="object"].index
@@ -395,50 +320,157 @@ print("categorical_feats are: {}".format(categorical_feats))
 
 ## categorical features distribution
 
-Temporally fill NA with Missing and droped in case of differnet columns between Survived_0 and Survived_1
-
-Viewing whether there are some categorical features linear to the surviving ratio num(1)/num(0)
+### cabin&ticket distribution
+cabin& ticket got too much unique values, we calssified them by using new rules
 
 
 ```python
-feats = ["Embarked","Sex"]
-feats2 = ["Cabin","Name","Ticket"]
-train_plt = train
-
-plt.figure(figsize=(18,18))
-for i,c in enumerate(feats):
-    train_plt[c] = train[c].fillna("Missing")
-    train_plt[c] =train_plt[c][train_plt[c]!="Missing"]
-    Survived_0 = train[c][train_plt["Survived"]==0].value_counts()
-    Survived_1 = train[c][train_plt["Survived"]==1].value_counts()
-    
-    ind = [i+1 for i in range(len(Survived_0))]      # bar only support x that has same data type as y
-    plt.subplot(len(feats),2,2*i+1)
-    plt.bar(ind,Survived_1.values,label='Survived')
-    plt.bar(ind,Survived_0.values,bottom=Survived_1.values,label='Not Survived')
-    plt.xticks(ind,Survived_0.index)
-    plt.ylabel("frequency")
-    plt.legend(loc="upper right")
-    plt.title(feats[i])
-    
-    plt.subplot(len(feats),2,2*i+2)
-    plt.bar(ind, Survived_1.values/Survived_0.values)
-    plt.xticks(ind,Survived_0.index)
-    plt.ylabel("Surviving Ratio")
-    plt.title(feats[i])
-    
-#plt.figure(figsize=(18,18))
-#for i,c in enumerate(feats2):
-#    train[c] = train[c].fillna("Missing")
-#    plt.subplot(np.ceil(len(feats2)/2),2,i+1)
-#    sns.countplot(train[c],hue=train["Survived"])
-#    plt.xlabel(train[c])
-#    plt.ylabel("Frequency")
-#    plt.title(feats2[i])
+train[["Cabin","Ticket"]].describe()
 ```
 
 
-![png](output_10_0.png)
+
+
+<div>
+<style>
+    .dataframe thead tr:only-child th {
+        text-align: right;
+    }
+
+    .dataframe thead th {
+        text-align: left;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Cabin</th>
+      <th>Ticket</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>count</th>
+      <td>204</td>
+      <td>891</td>
+    </tr>
+    <tr>
+      <th>unique</th>
+      <td>147</td>
+      <td>681</td>
+    </tr>
+    <tr>
+      <th>top</th>
+      <td>B96 B98</td>
+      <td>CA. 2343</td>
+    </tr>
+    <tr>
+      <th>freq</th>
+      <td>4</td>
+      <td>7</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+
+
+
+```python
+train["Cabin"][train["Cabin"].notnull()].head()
+```
+
+
+
+
+    1      C85
+    3     C123
+    6      E46
+    10      G6
+    11    C103
+    Name: Cabin, dtype: object
+
+
+
+
+```python
+train["Ticket"][train["Ticket"].notnull()].head()
+```
+
+
+
+
+    0           A/5 21171
+    1            PC 17599
+    2    STON/O2. 3101282
+    3              113803
+    4              373450
+    Name: Ticket, dtype: object
+
+
+
+### cabin by using first letter & ticket by using prefix
+
+
+```python
+feats2 = ["Cabin","Ticket"]
+
+train["Cabin"] = train["Cabin"].str[0]
+
+Ticket = []
+for i in list(train["Ticket"]):
+    if not i.isdigit():
+        Ticket.append(i.replace(".","").replace("/","").strip().split(" ")[0])
+    else:
+        Ticket.append("Num")
+train["Ticket"] = Ticket
+
+train.Cabin.value_counts()
+```
+
+
+
+
+    C    59
+    B    47
+    D    33
+    E    32
+    A    15
+    F    13
+    G     4
+    T     1
+    Name: Cabin, dtype: int64
+
+
+
+### Visualization
+Temporally fill NA with Missing
+
+Viewing whether ther're some categorical features linear to the survival probability
+
+
+```python
+feats = ["Embarked","Sex","Cabin"]
+train_plt = train.copy()
+
+plt.figure(figsize=(18,18))
+for i,c in enumerate(feats):
+    train_plt[feats] = train_plt[feats].fillna("Missing")
+    plt.subplot(len(feats),2,i*2+1) 
+    sns.countplot(train_plt[c])
+    
+    plt.subplot(len(feats),2,i*2+2)
+    sns.barplot(y="Survived",x=c,data=train_plt)
+    plt.ylabel("Survival Probability")
+```
+
+
+![png](output_16_0.png)
 
 
 ## numeric features distribution
@@ -448,22 +480,22 @@ Viewing whether there are some bizzarre relationship between numeric features an
 
 ```python
 plt.figure(figsize=(30,30))
+
 for i,c in enumerate(numeric_feats):
     plt.subplot(len(numeric_feats),2,i*2+1)
     sns.violinplot(train_plt["Survived"],train_plt[c],hue=train["Sex"],split=True)
     plt.ylabel("frequency")
     plt.title(numeric_feats[i])
     
-for i,c in enumerate(numeric_feats):
-    train_plt[c] = train[c].fillna(train[c].mean())
     plt.subplot(len(numeric_feats),2,i*2+2)
-    sns.distplot(train[c])
+    sns.distplot(train_plt[c][(train_plt["Survived"]==0) & (train_plt[c].notnull())],color="Red")
+    sns.distplot(train_plt[c][(train_plt["Survived"]==1) & (train_plt[c].notnull())],color="Green")                          
     plt.ylabel("frequency")
-    plt.title(numeric_feats[i])
+    plt.legend(["Not Survived","Survived"])
 ```
 
 
-![png](output_13_0.png)
+![png](output_19_0.png)
 
 
 ## data correlation 
@@ -475,10 +507,62 @@ g = sns.heatmap(train.corr(),vmax =0.9,square=False,annot=True,fmt=".2f")
 ```
 
 
-![png](output_15_0.png)
+![png](output_21_0.png)
 
 
 # Data Preprocessing
+
+## outlier 
+
+### detect outliers
+
+
+```python
+def detect_outlier(df,numeric_feats,n):
+    outlier_ind = []
+    for col in numeric_feats:
+        Q1 = np.percentile(df[col],25)
+        Q3 = np.percentile(df[col],75)
+        IQR = Q3 - Q1
+        outlier_limit = 1.5*IQR
+        outlier_list  = df[(df[col]<(Q1-outlier_limit))|
+                            (df[col]>(Q3+outlier_limit))].index
+        outlier_ind.extend(outlier_list)
+    # select samples containing more than n outliers
+    outlier_ind = pd.Series(outlier_ind)
+    outlier_ind_count  = outlier_ind.value_counts()
+    ourlier_drop = outlier_ind_count[outlier_ind_count.values> n].index
+    return ourlier_drop
+
+ourlier_drop =  detect_outlier(train,["Age","Fare","SibSp","Parch"],2)
+```
+
+### delete outliers
+
+
+```python
+train = train.drop(ourlier_drop,axis=0).reset_index(drop=True)
+```
+
+## update joint data after delete outliers and the classified cabin&ticket
+
+
+```python
+features = pd.concat([train, test]).reset_index(drop=True)
+features.drop("Survived",axis=1,inplace=True)
+
+feats2 = ["Cabin","Ticket"]
+
+features["Cabin"] = features["Cabin"].str[0]
+
+Ticket = []
+for i in list(features["Ticket"]):
+    if not i.isdigit():
+        Ticket.append(i.replace(".","").replace("/","").strip().split(" ")[0])
+    else:
+        Ticket.append("Num")
+features["Ticket"] = Ticket
+```
 
 ## extract title from name
 
@@ -491,23 +575,23 @@ features["Title"].value_counts()
 
 
 
-    Mr          757
-    Miss        260
+    Mr          753
+    Miss        255
     Mrs         197
-    Master       61
+    Master       60
     Dr            8
     Rev           8
     Col           4
+    Ms            2
     Mlle          2
     Major         2
-    Ms            2
-    Sir           1
-    Dona          1
-    Mme           1
     Capt          1
-    Countess      1
     Don           1
+    Sir           1
+    Countess      1
     Jonkheer      1
+    Mme           1
+    Dona          1
     Lady          1
     Name: Title, dtype: int64
 
@@ -593,7 +677,7 @@ pd.crosstab(features["Title"],features["Sex"]).T
       <td>1</td>
       <td>0</td>
       <td>0</td>
-      <td>260</td>
+      <td>255</td>
       <td>2</td>
       <td>1</td>
       <td>0</td>
@@ -613,11 +697,11 @@ pd.crosstab(features["Title"],features["Sex"]).T
       <td>1</td>
       <td>0</td>
       <td>2</td>
-      <td>61</td>
+      <td>60</td>
       <td>0</td>
       <td>0</td>
       <td>0</td>
-      <td>757</td>
+      <td>753</td>
       <td>0</td>
       <td>0</td>
       <td>8</td>
@@ -638,10 +722,10 @@ features["Title"].value_counts()
 
 
 
-    Mr        757
-    Miss      260
+    Mr        753
+    Miss      255
     Mrs       197
-    Master     61
+    Master     60
     Rare       34
     Name: Title, dtype: int64
 
@@ -655,21 +739,26 @@ print(features.shape)
 features.isnull().sum()[features.isnull().sum()>0].sort_values(ascending=False)
 ```
 
-    (1309, 12)
+    (1299, 12)
     
 
 
 
 
-    Cabin       1014
-    Age          263
+    Cabin       1007
+    Age          256
     Embarked       2
     Fare           1
     dtype: int64
 
 
 
-Cabin: has lost too much data, we probabilly need to delete it 
+Cabin: has lost too much data, we probabilly need to give it a new category
+
+
+```python
+features["Cabin"].fillna("X",inplace=True)
+```
 
 Fare : strong connection with Pclass, use mediean of same Pclass's Fare
 
@@ -690,6 +779,20 @@ Age is hard to tell, we can buld a model for predicting it by using other featur
 
 
 ```python
+#age_nan_index = list(features["Age"][features["Age"].isnull()].index)
+#for i in age_nan_index:
+#    age_med = features["Age"].median()
+#    age_pred =  features["Age"][(features["SibSp"]==features.iloc[i]["SibSp"])&
+#                                (features["Parch"]==features.iloc[i]["Parch"])&
+#                                (features["Pclass"]==features.iloc[i]["Pclass"])].median()
+#    if not np.isnan(age_pred):
+#        features["Age"].iloc[i]=age_pred
+#    else:
+#        features["Age"].iloc[i]=age_med
+```
+
+
+```python
 from sklearn.model_selection import KFold, cross_val_score, train_test_split
 from sklearn.metrics import mean_squared_error
 from sklearn.model_selection import GridSearchCV 
@@ -703,7 +806,7 @@ def pred_age(data,model,param):
     Ytrain = train["Age"]
     test   = test.drop("Age",axis=1)
     
-    n_folds=5
+    n_folds=10
     kf = KFold(n_folds, shuffle=True, random_state=42).get_n_splits(Xtrain)
     models = GridSearchCV(model,param,scoring="neg_mean_squared_error",cv=kf)
     models.fit(Xtrain,Ytrain)
@@ -713,7 +816,7 @@ def pred_age(data,model,param):
     return data,models.best_params_,models.best_score_
 ```
 
-check whether there is no missing value except cabin & age
+check whether there is no missing value except age
 
 
 ```python
@@ -723,8 +826,7 @@ features.isnull().sum()[features.isnull().sum()>0].sort_values(ascending=False)
 
 
 
-    Cabin    1014
-    Age       263
+    Age    256
     dtype: int64
 
 
@@ -736,7 +838,14 @@ delete useless features
 
 
 ```python
-features.drop(["PassengerId","Cabin","Ticket","Name"],axis=1,inplace=True)
+features.drop(["PassengerId","Name"],axis=1,inplace=True)
+```
+
+## add feature
+
+
+```python
+features["FamSize"]=features["SibSp"]+features["Parch"]
 ```
 
 ## numeric2categorical
@@ -797,14 +906,14 @@ features = pd.get_dummies(features,columns=category_feats)
 print(features.shape)
 ```
 
-    (1309, 30)
+    (1299, 77)
     
 
 ## age modeling 
 
 
 ```python
-from sklearn.linear_model import Lasso
+from sklearn.linear_model import Lasso,Ridge
 lasso = Lasso()
 param = {"alpha": np.logspace(-5,0,100).round(5)}
 
@@ -812,7 +921,7 @@ features,param, score = pred_age(features,lasso,param)
 print("rmse = {:.2f}, with param = {}".format(np.sqrt(-score),param))
 ```
 
-    rmse = 10.92, with param = {'alpha': 0.0059899999999999997}
+    rmse = 10.94, with param = {'alpha': 0.027189999999999999}
     
 
 ## new train and test 
@@ -891,12 +1000,12 @@ LR,best_param = param_select(LogisticRegression(),param)
 print(best_param)
 ```
 
-    {'C': 0.35111999999999999, 'max_iter': 100.0}
+    {'C': 0.027189999999999999, 'max_iter': 100.0}
     
 
 
 ```python
-LR = LogisticRegression(C =0.3511,max_iter=100, random_state=3)
+LR = LogisticRegression(C =0.01918,max_iter=100, random_state=3)
 ```
 
 ### SVC
@@ -908,12 +1017,12 @@ svc,best_param = param_select(SVC(random_state=3),param)
 print(best_param)
 ```
 
-    {'C': 0.24771000000000001}
+    {'C': 0.31257000000000001}
     
 
 
 ```python
-svc = SVC(C =0.24771, random_state=3)
+svc = SVC(C =0.70548, random_state=3)
 ```
 
 ### SGDClassifier 
@@ -925,12 +1034,12 @@ sgdc,best_param = param_select(SGDClassifier(loss='hinge', penalty='elasticnet')
 print(best_param)
 ```
 
-    {'alpha': 0.0053400000000000001, 'l1_ratio': 0.2411764705882353}
+    {'alpha': 0.1963, 'l1_ratio': 0.10000000000000001}
     
 
 
 ```python
-sgdc = SGDClassifier(loss='hinge', penalty='elasticnet', alpha=0.00534, l1_ratio=0.24118)
+sgdc = SGDClassifier(loss='hinge', penalty='elasticnet', alpha=0.01978, l1_ratio=0.42941)
 ```
 
 ### RandomForestClassifier 
@@ -943,34 +1052,33 @@ rfc,best_param = param_select(RandomForestClassifier(random_state=4),param)
 print(best_param)
 ```
 
-    {'max_depth': 1, 'min_samples_leaf': 1, 'min_samples_split': 2, 'n_estimators': 110}
+    {'max_depth': 1, 'min_samples_leaf': 1, 'min_samples_split': 2, 'n_estimators': 10}
     
 
 
 ```python
-rfc = RandomForestClassifier(n_estimators=110, min_samples_split=2, min_samples_leaf=1, max_depth=1, random_state=4)
+rfc = RandomForestClassifier(n_estimators=10, min_samples_split=2, min_samples_leaf=1, max_depth=1, random_state=4)
 ```
 
 ### XGBoost
 
 
 ```python
-param = {"colsample_bytree": np.linspace(0.2,1,20), "gamma": np.logspace(-2,1,5),
+param = {"colsample_bytree": np.linspace(0.2,1,5), "gamma": np.logspace(-2,1,5),
          "learning_rate": np.logspace(-2,0,5), "max_depth": range(3,11,8),
-         "n_estimators": range(10,200,25), "subsample": np.linspace(0.2,1,20)}
+         "n_estimators": range(10,200,50), "subsample": np.linspace(0.2,1,5)}
 XGB,best_param = param_select(xgb.XGBClassifier(random_state=5),param)
 print(best_param)
 ```
 
-    {'colsample_bytree': 1.0, 'gamma': 1.7782794100389228, 'learning_rate': 0.31622776601683794, 'max_depth': 3, 'n_estimators': 60, 'subsample': 0.57894736842105265}
+    {'colsample_bytree': 0.40000000000000002, 'gamma': 0.056234132519034911, 'learning_rate': 0.31622776601683794, 'max_depth': 3, 'n_estimators': 110, 'subsample': 0.60000000000000009}
     
 
 
 ```python
-XGB = xgb.XGBClassifier(colsample_bytree=1, gamma=1.77828, 
-                        learning_rate=0.03163, max_depth=3, 
-                        n_estimators=60, reg_alpha=0.0, reg_lambda=0.0,
-                        subsample=0.57895, random_state=5)
+XGB = xgb.XGBClassifier(colsample_bytree=0.4, gamma=0.056234, 
+                        learning_rate=0.316228, max_depth=3, 
+                        n_estimators=110,subsample=0.6, random_state=5)
 ```
 
 ### LightGBM
@@ -989,7 +1097,7 @@ print(best_param)
 
 ```python
 LGB = lgb.LGBMClassifier(n_estimators= 110, min_samples_split= 2,
-                         min_samples_leaf= 1, max_depth= 1
+                         min_samples_leaf= 1, max_depth= 1)
 ```
 
 ## base models scores
@@ -1001,7 +1109,7 @@ print("\nLogisitciRegression score: {:.4f} +/- {:.4f}\n".format(score.mean(), sc
 ```
 
     
-    LogisitciRegression score: 0.8201 +/- 0.0139
+    LogisitciRegression score: 0.8271 +/- 0.0177
     
     
 
@@ -1012,7 +1120,7 @@ print("\nSVC score: {:.4f} +/- {:.4f}\n".format(score.mean(), score.std()))
 ```
 
     
-    SVC score: 0.8246 +/- 0.0076
+    SVC score: 0.8169 +/- 0.0191
     
     
 
@@ -1023,7 +1131,7 @@ print("\nSGDClassifier score: {:.4f} +/- {:.4f}\n".format(score.mean(), score.st
 ```
 
     
-    SGDClassifier score: 0.8078 +/- 0.0195
+    SGDClassifier score: 0.8373 +/- 0.0126
     
     
 
@@ -1034,7 +1142,7 @@ print("\nRandomForestClassifier score: {:.4f} +/- {:.4f}\n".format(score.mean(),
 ```
 
     
-    RandomForestClassifier score: 0.7989 +/- 0.0150
+    RandomForestClassifier score: 0.7751 +/- 0.0324
     
     
 
@@ -1045,7 +1153,7 @@ print("\nXGBoost score: {:.4f} +/- {:.4f}\n".format(score.mean(), score.std()))
 ```
 
     
-    XGBoost score: 0.8302 +/- 0.0144
+    XGBoost score: 0.8497 +/- 0.0146
     
     
 
@@ -1056,7 +1164,7 @@ print("\nlightGBM score: {:.4f} +/- {:.4f}\n".format(score.mean(), score.std()))
 ```
 
     
-    lightGBM score: 0.8067 +/- 0.0148
+    lightGBM score: 0.8384 +/- 0.0132
     
     
 
@@ -1074,11 +1182,11 @@ class StuckingModels(BaseEstimator, RegressorMixin, TransformerMixin):
     def fit(self,x_data,y_data):
         self.BaseModels_ = [list() for x in self.BaseModels]
         self.MetaModel_  = clone(self.MetaModel)
-        kf = KFold(n_splits= 5, shuffle= True, random_state= 10)
+        sss = StratifiedShuffleSplit(n_splits=5,test_size = 0.2, random_state=1)
         meta_fold = np.zeros((x_data.shape[0],len(self.BaseModels)))
         
         for i,model in enumerate(self.BaseModels):
-            for train_index, test_index in kf.split(x_data,y_data):
+            for train_index, test_index in sss.split(x_data,y_data):
                 instance = clone(model)
                 self.BaseModels_[i].append(instance)
                 instance.fit(x_data[train_index],y_data[train_index])
@@ -1102,10 +1210,10 @@ class StuckingModels(BaseEstimator, RegressorMixin, TransformerMixin):
 StuckedModels =StuckingModels(BaseModels=(svc,sgdc,rfc,XGB,LGB),MetaModel=LR)
 score = accuracy_cv(StuckedModels)
 print(" Stucked base models score:{:.4f} +/- {:.4f}".format(score.mean(),score.std()))
-# Stucked base models score:0.8380 +/- 0.0050
+#  Stucked base models score:0.8395 +/- 0.0105
 ```
 
-     Stucked base models score:0.8458 +/- 0.0097
+     Stucked base models score:0.8395 +/- 0.0105
     
 
 # Prediction
@@ -1127,4 +1235,3 @@ submission.to_csv(filepath + "submission.csv",index=False)
 ```python
 
 ```
-
