@@ -36,7 +36,7 @@ print("test contains: {}".format(test.shape))
 
 
 ```python
-train.head(5)
+train.head(10)
 ```
 
 
@@ -149,6 +149,81 @@ train.head(5)
       <td>8.0500</td>
       <td>NaN</td>
       <td>S</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>6</td>
+      <td>0</td>
+      <td>3</td>
+      <td>Moran, Mr. James</td>
+      <td>male</td>
+      <td>NaN</td>
+      <td>0</td>
+      <td>0</td>
+      <td>330877</td>
+      <td>8.4583</td>
+      <td>NaN</td>
+      <td>Q</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>7</td>
+      <td>0</td>
+      <td>1</td>
+      <td>McCarthy, Mr. Timothy J</td>
+      <td>male</td>
+      <td>54.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>17463</td>
+      <td>51.8625</td>
+      <td>E46</td>
+      <td>S</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>8</td>
+      <td>0</td>
+      <td>3</td>
+      <td>Palsson, Master. Gosta Leonard</td>
+      <td>male</td>
+      <td>2.0</td>
+      <td>3</td>
+      <td>1</td>
+      <td>349909</td>
+      <td>21.0750</td>
+      <td>NaN</td>
+      <td>S</td>
+    </tr>
+    <tr>
+      <th>8</th>
+      <td>9</td>
+      <td>1</td>
+      <td>3</td>
+      <td>Johnson, Mrs. Oscar W (Elisabeth Vilhelmina Berg)</td>
+      <td>female</td>
+      <td>27.0</td>
+      <td>0</td>
+      <td>2</td>
+      <td>347742</td>
+      <td>11.1333</td>
+      <td>NaN</td>
+      <td>S</td>
+    </tr>
+    <tr>
+      <th>9</th>
+      <td>10</td>
+      <td>1</td>
+      <td>2</td>
+      <td>Nasser, Mrs. Nicholas (Adele Achem)</td>
+      <td>female</td>
+      <td>14.0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>237736</td>
+      <td>30.0708</td>
+      <td>NaN</td>
+      <td>C</td>
     </tr>
   </tbody>
 </table>
@@ -366,8 +441,8 @@ train[["Cabin","Ticket"]].describe()
     </tr>
     <tr>
       <th>top</th>
-      <td>B96 B98</td>
-      <td>CA. 2343</td>
+      <td>C23 C25 C27</td>
+      <td>1601</td>
     </tr>
     <tr>
       <th>freq</th>
@@ -399,36 +474,22 @@ train["Cabin"][train["Cabin"].notnull()].head()
 
 
 ```python
-train["Ticket"][train["Ticket"].notnull()].head()
+#train["Ticket"][train["Ticket"].notnull()].head()
 ```
 
-
-
-
-    0           A/5 21171
-    1            PC 17599
-    2    STON/O2. 3101282
-    3              113803
-    4              373450
-    Name: Ticket, dtype: object
-
-
-
-### cabin by using first letter & ticket by using prefix
+### cabin by using first letter #& ticket by using prefix
 
 
 ```python
-feats2 = ["Cabin","Ticket"]
-
 train["Cabin"] = train["Cabin"].str[0]
 
-Ticket = []
-for i in list(train["Ticket"]):
-    if not i.isdigit():
-        Ticket.append(i.replace(".","").replace("/","").strip().split(" ")[0])
-    else:
-        Ticket.append("Num")
-train["Ticket"] = Ticket
+#Ticket = []
+#for i in list(train["Ticket"]):
+#    if not i.isdigit():
+#        Ticket.append(i.replace(".","").replace("/","").strip().split(" ")[0])
+#    else:
+#        Ticket.append("Num")
+#train["Ticket"] = Ticket
 
 train.Cabin.value_counts()
 ```
@@ -544,7 +605,7 @@ ourlier_drop =  detect_outlier(train,["Age","Fare","SibSp","Parch"],2)
 train = train.drop(ourlier_drop,axis=0).reset_index(drop=True)
 ```
 
-## update joint data after delete outliers and the classified cabin&ticket
+## update joint data after delete outliers and the classified cabin #&ticket
 
 
 ```python
@@ -555,13 +616,13 @@ feats2 = ["Cabin","Ticket"]
 
 features["Cabin"] = features["Cabin"].str[0]
 
-Ticket = []
-for i in list(features["Ticket"]):
-    if not i.isdigit():
-        Ticket.append(i.replace(".","").replace("/","").strip().split(" ")[0])
-    else:
-        Ticket.append("Num")
-features["Ticket"] = Ticket
+#Ticket = []
+#for i in list(features["Ticket"]):
+#    if not i.isdigit():
+#        Ticket.append(i.replace(".","").replace("/","").strip().split(" ")[0])
+#    else:
+#        Ticket.append("Num")
+#features["Ticket"] = Ticket
 ```
 
 ## extract title from name
@@ -579,20 +640,20 @@ features["Title"].value_counts()
     Miss        255
     Mrs         197
     Master       60
-    Dr            8
     Rev           8
+    Dr            8
     Col           4
     Ms            2
     Mlle          2
     Major         2
     Capt          1
-    Don           1
-    Sir           1
-    Countess      1
-    Jonkheer      1
-    Mme           1
     Dona          1
     Lady          1
+    Don           1
+    Sir           1
+    Mme           1
+    Countess      1
+    Jonkheer      1
     Name: Title, dtype: int64
 
 
@@ -833,19 +894,334 @@ features.isnull().sum()[features.isnull().sum()>0].sort_values(ascending=False)
 
 # Feature Engineering
 
+## add feature
+
+FamSize: crate Famliy size to see if it is corralete to survival
+
+
+```python
+train_plt["FamSize"]=train_plt["SibSp"]+train_plt["Parch"]+1
+sns.barplot(y="Survived",x="FamSize",data=train_plt)
+```
+
+
+
+
+    <matplotlib.axes._subplots.AxesSubplot at 0x1dc854f0400>
+
+
+
+
+![png](output_50_1.png)
+
+
+update to all data
+
+
+```python
+features["FamSize"]=features["SibSp"]+features["Parch"]+1
+```
+
+IsAlone: from the graph we can see that someone who has no family only possess 0.3 survival rate, so further we build IsAlone that indicates whether they are alone
+
+
+```python
+train_plt.loc[train_plt["FamSize"]==1,"IsAlone"] = 1
+train_plt.loc[train_plt["FamSize"]>1,"IsAlone"] = 0
+sns.barplot(y="Survived",x="IsAlone",data=train_plt)
+```
+
+
+
+
+    <matplotlib.axes._subplots.AxesSubplot at 0x1dc86866780>
+
+
+
+
+![png](output_54_1.png)
+
+
+update to all data
+
+
+```python
+features.loc[features["FamSize"]==1,"IsAlone"] = 1
+features.loc[features["FamSize"]>1,"IsAlone"] = 0
+```
+
+WithFam: indicates that families were getting aboard together, by using last name and fare to groupby, coz families seems paying the same fare for them all
+
+
+```python
+## extract last name
+train_plt["LastName"] = train_plt["Name"].map(lambda s: str.split(s,",")[0])
+
+## see if there is another feature that can help to identify families
+NameGroup = train_plt.groupby(["LastName"])
+NameGroup.size()[NameGroup.size()> 1].index
+```
+
+
+
+
+    Index(['Abbott', 'Abelson', 'Ali', 'Allen', 'Allison', 'Andersson', 'Andrews',
+           'Arnold-Franchi', 'Asplund', 'Attalah',
+           ...
+           'Turpin', 'Van Impe', 'Vander Planke', 'Webber', 'West', 'White',
+           'Wick', 'Williams', 'Yasbeck', 'Zabour'],
+          dtype='object', name='LastName', length=133)
+
+
+
+
+```python
+NameGroup.get_group("Andersson").head()
+```
+
+
+
+
+<div>
+<style>
+    .dataframe thead tr:only-child th {
+        text-align: right;
+    }
+
+    .dataframe thead th {
+        text-align: left;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>PassengerId</th>
+      <th>Survived</th>
+      <th>Pclass</th>
+      <th>Name</th>
+      <th>Sex</th>
+      <th>Age</th>
+      <th>SibSp</th>
+      <th>Parch</th>
+      <th>Ticket</th>
+      <th>Fare</th>
+      <th>Cabin</th>
+      <th>Embarked</th>
+      <th>FamSize</th>
+      <th>IsAlone</th>
+      <th>LastName</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>13</th>
+      <td>14</td>
+      <td>0</td>
+      <td>3</td>
+      <td>Andersson, Mr. Anders Johan</td>
+      <td>male</td>
+      <td>39.0</td>
+      <td>1</td>
+      <td>5</td>
+      <td>347082</td>
+      <td>31.2750</td>
+      <td>Missing</td>
+      <td>S</td>
+      <td>7</td>
+      <td>0.0</td>
+      <td>Andersson</td>
+    </tr>
+    <tr>
+      <th>68</th>
+      <td>69</td>
+      <td>1</td>
+      <td>3</td>
+      <td>Andersson, Miss. Erna Alexandra</td>
+      <td>female</td>
+      <td>17.0</td>
+      <td>4</td>
+      <td>2</td>
+      <td>3101281</td>
+      <td>7.9250</td>
+      <td>Missing</td>
+      <td>S</td>
+      <td>7</td>
+      <td>0.0</td>
+      <td>Andersson</td>
+    </tr>
+    <tr>
+      <th>119</th>
+      <td>120</td>
+      <td>0</td>
+      <td>3</td>
+      <td>Andersson, Miss. Ellis Anna Maria</td>
+      <td>female</td>
+      <td>2.0</td>
+      <td>4</td>
+      <td>2</td>
+      <td>347082</td>
+      <td>31.2750</td>
+      <td>Missing</td>
+      <td>S</td>
+      <td>7</td>
+      <td>0.0</td>
+      <td>Andersson</td>
+    </tr>
+    <tr>
+      <th>146</th>
+      <td>147</td>
+      <td>1</td>
+      <td>3</td>
+      <td>Andersson, Mr. August Edvard ("Wennerstrom")</td>
+      <td>male</td>
+      <td>27.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>350043</td>
+      <td>7.7958</td>
+      <td>Missing</td>
+      <td>S</td>
+      <td>1</td>
+      <td>1.0</td>
+      <td>Andersson</td>
+    </tr>
+    <tr>
+      <th>541</th>
+      <td>542</td>
+      <td>0</td>
+      <td>3</td>
+      <td>Andersson, Miss. Ingeborg Constanzia</td>
+      <td>female</td>
+      <td>9.0</td>
+      <td>4</td>
+      <td>2</td>
+      <td>347082</td>
+      <td>31.2750</td>
+      <td>Missing</td>
+      <td>S</td>
+      <td>7</td>
+      <td>0.0</td>
+      <td>Andersson</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+
+
+
+```python
+# train_plt_group_df saves observations shared with same LastName, Fare and FamSize
+train_plt_fam = train_plt.groupby(["LastName","Fare","FamSize"])
+train_plt_fam_df = train_plt_fam.size()[(train_plt_fam.size()> 1)]
+train_plt_fam_df = pd.DataFrame(train_plt_fam_df.reset_index())
+
+train_plt["WithFam"] = 0
+train_plt.loc[(train_plt.LastName.map(lambda s: s in train_plt_fam_df.LastName.values))&
+              (train_plt.Fare.map(lambda s: s in train_plt_fam_df.Fare.values))&
+              (train_plt.FamSize>1),"WithFam"] = 1
+sns.barplot(y="Survived",x="WithFam",data=train_plt)
+```
+
+
+
+
+    <matplotlib.axes._subplots.AxesSubplot at 0x1dc8650f828>
+
+
+
+
+![png](output_60_1.png)
+
+
+update to all data
+
+
+```python
+features["LastName"] = features["Name"].map(lambda s: str.split(s,",")[0])
+
+features_fam = features.groupby(["LastName","Fare","FamSize"])
+features_fam_df = features_fam.size()[(features_fam.size()> 1)]
+features_fam_df = pd.DataFrame(features_fam_df.reset_index())
+
+features["WithFam"] = 0
+features.loc[(features.LastName.map(lambda s: s in features_fam_df.LastName.values))&
+             (features.Fare.map(lambda s: s in features_fam_df.Fare.values))&
+             (features.FamSize>1),"WithFam"] = 1
+```
+
+Group: indicates that man who gets aboard with friends or colleagues, by using ticket info and fare, coz group would have same ticket number
+
+
+```python
+Group = train_plt.groupby(["Ticket","Fare"])
+Group.size()[Group.size()> 1][:10]
+```
+
+
+
+
+    Ticket  Fare    
+    110152  86.5000     3
+    110413  79.6500     3
+    110465  52.0000     2
+    111361  57.9792     2
+    113505  55.0000     2
+    113572  80.0000     2
+    113760  120.0000    4
+    113776  66.6000     2
+    113781  151.5500    4
+    113789  52.0000     2
+    dtype: int64
+
+
+
+
+```python
+Group_df = Group.size()[(Group.size()> 1)]
+Group_df = pd.DataFrame(Group_df.reset_index())
+
+train_plt["Group"] = 0
+train_plt.loc[(train_plt.Ticket.map(lambda s: s in Group_df.Ticket.values))&
+              (train_plt.Fare.map(lambda s: s in Group_df.Fare.values)),"Group"] = 1
+sns.barplot(y="Survived",x="Group",data=train_plt)
+```
+
+
+
+
+    <matplotlib.axes._subplots.AxesSubplot at 0x1dc85671f28>
+
+
+
+
+![png](output_65_1.png)
+
+
+update to all data
+
+
+```python
+features_group = features.groupby(["Ticket","Fare"])
+features_group_df = features_group.size()[(features_group.size()> 1)]
+features_group_df = pd.DataFrame(features_group_df.reset_index())
+
+features["Group"] = 0
+features.loc[(features.Ticket.map(lambda s: s in features_group_df.Ticket.values))&
+             (features.Fare.map(lambda s: s in features_group_df.Fare.values)),"Group"] = 1
+```
+
 ## delete feature
 delete useless features
 
 
 ```python
-features.drop(["PassengerId","Name"],axis=1,inplace=True)
-```
-
-## add feature
-
-
-```python
-features["FamSize"]=features["SibSp"]+features["Parch"]
+features.drop(["PassengerId","Name","Ticket"],axis=1,inplace=True)
 ```
 
 ## numeric2categorical
@@ -856,27 +1232,31 @@ from observing numeric feautres disstribution
 features.Parch = features.Parch.astype(str)
 features.SibSp = features.SibSp.astype(str)
 features.Pclass = features.Pclass.astype(str)
+features.FamSize = features.FamSize.astype(str)
 ```
 
 ## categorical2numeric
-from observing categorical feautres disstribution
+from observing categorical feautres distribution
 
 
 ```python
-## label encoding
-#from sklearn.preprocessing import LabelEncoder
+# label encoding
+from sklearn.preprocessing import LabelEncoder
 
-#cols = None
+cols = ["Sex"]
 
-## process columns, apply LabelEncoder to categorical features
-#for c in cols:
-#    lbl = LabelEncoder() 
-#    lbl.fit(list(features[c].values)) 
-#    features[c] = lbl.transform(list(features[c].values))
+# process columns, apply LabelEncoder to categorical features
+for c in cols:
+    lbl = LabelEncoder() 
+    lbl.fit(list(features[c].values)) 
+    features[c] = lbl.transform(list(features[c].values))
 
-## shape        
-#print('Shape features: {}'.format(features.shape))
+# shape        
+print('Shape features: {}'.format(features.shape))
 ```
+
+    Shape features: (1299, 14)
+    
 
 ## skew features
 normal distribution for features with high skewness by using boxcox1p
@@ -889,11 +1269,21 @@ from scipy.special import boxcox1p
 numeric_feats = features.dtypes[features.dtypes != "object"].index
 
 skewed_feats = features[numeric_feats].apply(lambda x: skew(x.dropna())) #compute skewness
+print(skewed_feats)
 skewed_feats = skewed_feats[abs(skewed_feats) > 0.75].index
 
 lam=0.15
 features[skewed_feats] = boxcox1p(features[skewed_feats],lam)
 ```
+
+    Age        0.402936
+    Fare       4.506337
+    Sex       -0.606553
+    IsAlone   -0.443133
+    WithFam    0.667064
+    Group      0.202727
+    dtype: float64
+    
 
 ## get dummy
 OneHotEncoder
@@ -906,7 +1296,7 @@ features = pd.get_dummies(features,columns=category_feats)
 print(features.shape)
 ```
 
-    (1299, 77)
+    (1299, 925)
     
 
 ## age modeling 
@@ -921,7 +1311,7 @@ features,param, score = pred_age(features,lasso,param)
 print("rmse = {:.2f}, with param = {}".format(np.sqrt(-score),param))
 ```
 
-    rmse = 10.94, with param = {'alpha': 0.027189999999999999}
+    rmse = 10.76, with param = {'alpha': 0.0152}
     
 
 ## new train and test 
@@ -1000,7 +1390,7 @@ LR,best_param = param_select(LogisticRegression(),param)
 print(best_param)
 ```
 
-    {'C': 0.027189999999999999, 'max_iter': 100.0}
+    {'C': 0.077429999999999999, 'max_iter': 100.0}
     
 
 
@@ -1017,7 +1407,7 @@ svc,best_param = param_select(SVC(random_state=3),param)
 print(best_param)
 ```
 
-    {'C': 0.31257000000000001}
+    {'C': 1.0}
     
 
 
@@ -1034,7 +1424,7 @@ sgdc,best_param = param_select(SGDClassifier(loss='hinge', penalty='elasticnet')
 print(best_param)
 ```
 
-    {'alpha': 0.1963, 'l1_ratio': 0.10000000000000001}
+    {'alpha': 0.086970000000000006, 'l1_ratio': 0.10000000000000001}
     
 
 
@@ -1071,7 +1461,7 @@ XGB,best_param = param_select(xgb.XGBClassifier(random_state=5),param)
 print(best_param)
 ```
 
-    {'colsample_bytree': 0.40000000000000002, 'gamma': 0.056234132519034911, 'learning_rate': 0.31622776601683794, 'max_depth': 3, 'n_estimators': 110, 'subsample': 0.60000000000000009}
+    {'colsample_bytree': 0.80000000000000004, 'gamma': 10.0, 'learning_rate': 1.0, 'max_depth': 3, 'n_estimators': 160, 'subsample': 0.60000000000000009}
     
 
 
@@ -1106,10 +1496,11 @@ LGB = lgb.LGBMClassifier(n_estimators= 110, min_samples_split= 2,
 ```python
 score = accuracy_cv(LR)
 print("\nLogisitciRegression score: {:.4f} +/- {:.4f}\n".format(score.mean(), score.std()))
+# LogisitciRegression score: 0.8271 +/- 0.0177
 ```
 
     
-    LogisitciRegression score: 0.8271 +/- 0.0177
+    LogisitciRegression score: 0.8271 +/- 0.0184
     
     
 
@@ -1117,10 +1508,11 @@ print("\nLogisitciRegression score: {:.4f} +/- {:.4f}\n".format(score.mean(), sc
 ```python
 score = accuracy_cv(svc)
 print("\nSVC score: {:.4f} +/- {:.4f}\n".format(score.mean(), score.std()))
+# SVC score: 0.8169 +/- 0.0191
 ```
 
     
-    SVC score: 0.8169 +/- 0.0191
+    SVC score: 0.7864 +/- 0.0140
     
     
 
@@ -1128,10 +1520,11 @@ print("\nSVC score: {:.4f} +/- {:.4f}\n".format(score.mean(), score.std()))
 ```python
 score = accuracy_cv(sgdc)
 print("\nSGDClassifier score: {:.4f} +/- {:.4f}\n".format(score.mean(), score.std()))
+# SGDClassifier score: 0.8373 +/- 0.0126
 ```
 
     
-    SGDClassifier score: 0.8373 +/- 0.0126
+    SGDClassifier score: 0.8441 +/- 0.0116
     
     
 
@@ -1139,10 +1532,11 @@ print("\nSGDClassifier score: {:.4f} +/- {:.4f}\n".format(score.mean(), score.st
 ```python
 score = accuracy_cv(rfc)
 print("\nRandomForestClassifier score: {:.4f} +/- {:.4f}\n".format(score.mean(), score.std()))
+# RandomForestClassifier score: 0.7751 +/- 0.0324
 ```
 
     
-    RandomForestClassifier score: 0.7751 +/- 0.0324
+    RandomForestClassifier score: 0.6294 +/- 0.0244
     
     
 
@@ -1150,10 +1544,11 @@ print("\nRandomForestClassifier score: {:.4f} +/- {:.4f}\n".format(score.mean(),
 ```python
 score = accuracy_cv(XGB)
 print("\nXGBoost score: {:.4f} +/- {:.4f}\n".format(score.mean(), score.std()))
+# XGBoost score: 0.8497 +/- 0.0146
 ```
 
     
-    XGBoost score: 0.8497 +/- 0.0146
+    XGBoost score: 0.8475 +/- 0.0107
     
     
 
@@ -1161,10 +1556,11 @@ print("\nXGBoost score: {:.4f} +/- {:.4f}\n".format(score.mean(), score.std()))
 ```python
 score = accuracy_cv(LGB)
 print("\nlightGBM score: {:.4f} +/- {:.4f}\n".format(score.mean(), score.std()))
+# lightGBM score: 0.8384 +/- 0.0132
 ```
 
     
-    lightGBM score: 0.8384 +/- 0.0132
+    lightGBM score: 0.8282 +/- 0.0116
     
     
 
@@ -1203,17 +1599,45 @@ class StuckingModels(BaseEstimator, RegressorMixin, TransformerMixin):
         return self.MetaModel_.predict(meta_features)
 ```
 
+### Combine models class
+
+
+```python
+class CombineModels(BaseEstimator, RegressorMixin, TransformerMixin):
+    def __init__(self, models):
+        self.models = models
+        
+    # we define clones of the original models to fit the data in
+    def fit(self, x_data, y_data):
+        self.models_ = [clone(x) for x in self.models]
+        # train cloned base models
+        for model in self.models_:
+            model.fit(x_data,y_data)
+        return self
+    
+    # now we do the predictions for cloned models and average them
+    def predict(self,x_data):
+        predictions = np.column_stack([model.predict(x_data) for model in self.models_])
+        temp = np.sum(predictions,axis=1)
+        for i in temp:
+            if temp>= len(self.models)/2:
+                    predictions[i] = 1
+            else:
+                    predictions[i] = 0
+        return predictions
+```
+
 ### Stucked base models score
 
 
 ```python
-StuckedModels =StuckingModels(BaseModels=(svc,sgdc,rfc,XGB,LGB),MetaModel=LR)
+StuckedModels =StuckingModels(BaseModels=(svc,sgdc,XGB,LGB),MetaModel=LR)
 score = accuracy_cv(StuckedModels)
 print(" Stucked base models score:{:.4f} +/- {:.4f}".format(score.mean(),score.std()))
-#  Stucked base models score:0.8395 +/- 0.0105
+# Stucked base models score:0.8395 +/- 0.0105
 ```
 
-     Stucked base models score:0.8395 +/- 0.0105
+     Stucked base models score:0.8305 +/- 0.0171
     
 
 # Prediction
@@ -1229,9 +1653,4 @@ pred = StuckedModels.predict(test_features_scale)
 filepath = "F:\\Python_data_set\\titanic\\"
 submission = pd.DataFrame({"PassengerId":test.PassengerId,"Survived":pred})
 submission.to_csv(filepath + "submission.csv",index=False)
-```
-
-
-```python
-
 ```
